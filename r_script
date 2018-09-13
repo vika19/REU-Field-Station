@@ -1,0 +1,58 @@
+#!/usr/bin/env Rscript
+require("RPostgreSQL")
+# create a connection
+pw <- {
+  "testgres"
+}
+# loads the PostgreSQL driver
+drv <- dbDriver("PostgreSQL")
+# creates a connection to the postgres database note that "con" will be used later in each connection to the database
+con <- dbConnect(drv, dbname = "Field_Station2",
+                 host = "149.165.170.97", port = 5432,
+                 user = "postgres", password = pw)
+#removes the password
+rm(pw)
+ date <- format(Sys.Date(), "%m-%d-%Y")
+#Retrieve data from database according to provided SQL query
+getDataById <- function(device_id) {
+  db_values <- dbGetQuery(con, sprintf("SELECT * FROM sensor_data2 WHERE device_id = '%s' AND day = '%s'", device_id, date))
+  return(db_values)
+}
+df_device_1 <- getDataById("ApplePi") 
+df_device_2 <- getDataById("rpiX") 
+df_device_3 <- getDataById("Raspi")
+#Retrieve data from databse and convert to numeric values in order to plot
+time_1 <-as.POSIXlt(strptime(df_device_1$time, "%H:%M:%S")) 
+time_2 <-as.POSIXlt(strptime(df_device_2$time, "%H:%M:%S"))
+time_3 <-as.POSIXlt(strptime(df_device_3$time, "%H:%M:%S"))
+temp_1 <- as.numeric(as.character(df_device_1$temp))
+temp_2 <-as.numeric(as.character(df_device_2$temp))
+temp_3 <- as.numeric(as.character(df_device_3$temp)) 
+humid_1 <-as.numeric(as.character(df_device_1$humid)) 
+humid_2 <- as.numeric(as.character(df_device_2$humid)) 
+humid_3 <- as.numeric(as.character(df_device_3$humid)) 
+press_1 <- as.numeric(as.character(df_device_1$press)) 
+press_2 <- as.numeric(as.character(df_device_2$press)) 
+press_3 <- as.numeric(as.character(df_device_3$press))
+require(ggplot2)
+#Plotdata using the dataframes and save to indivual files
+ggplot() + labs(title= paste("Temperature: ",date), x= "time", y= "temperature[F]") +
+  geom_line(aes(x= time_1, y= temp_1), colour= "blue") +
+  geom_line(aes(x= time_2, y= temp_2), colour= "red") +
+  geom_line(aes(x= time_3, y= temp_3), colour= "green") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("temperature_plot.jpeg", path= "/var/www/html/images")
+ggplot() + labs(title= paste("Humidity: ",date), x= "time", y= "humidity[%]") +
+  geom_line(aes(x= time_1, y= humid_1), colour= "blue") +
+  geom_line(aes(x= time_2, y= humid_2), colour= "red") +
+  geom_line(aes(x= time_3, y= humid_3), colour= "green") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("humidity_plot.jpeg", path= "/var/www/html/images")
+ggplot() + labs(title= paste("Pressure: ",date), x= "time", y= "pressure[hPa]") +
+  geom_line(aes(x= time_1, y= press_1), colour= "blue") +
+  geom_line(aes(x= time_2, y= press_2), colour= "red") +
+  geom_line(aes(x= time_3, y= press_3), colour= "green") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("pressure_plot.jpeg", path= "/var/www/html/images")
+#End database connection
+lapply(dbListConnections(drv = dbDriver("PostgreSQL")), function(x) {dbDisconnect(conn = x)})
