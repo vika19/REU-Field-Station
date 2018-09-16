@@ -1,0 +1,2 @@
+*/10 * * * * ~/Desktop/sensor_input.py && ~/Desktop/push_file
+

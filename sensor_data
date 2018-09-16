@@ -1,0 +1,1 @@
+INSERT INTO sensor_data (username, device_id, day, time, temp, humid, press) VALUES ('slayton_tom','Raspi','07-05-2018','10:25:26', '77.19', '50.73', '994.2')
