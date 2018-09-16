@@ -1,5 +1,5 @@
 # REU-Field-Station  
-Files from Jetstream REU students  
+Files from Jetstream REU students:  
 BME280.py - custom class for sensor, with additional code  
 sensor_input.py - just custom code for pulling data from sensor  
 sensor_data - example output from sensor python script  
