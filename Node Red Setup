@@ -1,0 +1,1 @@
+[{"id":"cd5dba2d.f30388","type":"postgres","z":"673761ef.f9a88","postgr esdb":"f7a2a9ae.4c7578","name":"Postgres Database","output":false,"outputs":0,"x":536,"y":125,"wires":[]},{"id":"f7 a2a9ae.4c7578","type":"postgresdb","z":"","hostname":"your_ip_address" ,"port":"5432","db":"Database_Name","ssl":false}]
