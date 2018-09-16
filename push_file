@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo mosquitto_pub -h 149.165.170.97 -u "rasb-pi" -P "testpi" -t "test" -f sensor_data
